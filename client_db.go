@@ -19,7 +19,8 @@ func NewDBClient(token string, dbID string) *NoseDBClient {
 func (client *NoseDBClient) NewPage(title map[string]string, values map[string]string) string {
 	req := nosedata.NewCreateDatabasePageReq(client.DBID, title, values)
 	var res nosedata.CreateObjectRes
-	err := noseapi.HttpPost(noseapi.CreatePageApi, req, &res, client.Token)
+	httpClient := noseapi.NewHttpClient(client.Token, "POST")
+	err := httpClient.Request(noseapi.CreatePageApi, req, &res)
 	if err != nil {
 		log.Panic(err)
 	}

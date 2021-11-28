@@ -19,7 +19,8 @@ func NewPageClient(token string, pageID string) *NosePageClient {
 func (client *NosePageClient) NewEmptyPage(name string) string {
 	req := nosedata.NewEmptyPageReq(client.PageID, name)
 	var res nosedata.CreateObjectRes
-	err := noseapi.HttpPost(noseapi.CreatePageApi, req, &res, client.Token)
+	httpClient := noseapi.NewHttpClient(client.Token, "POST")
+	err := httpClient.Request(noseapi.CreatePageApi, req, &res)
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +31,8 @@ func (client *NosePageClient) NewEmptyPage(name string) string {
 func (client *NosePageClient) NewEmptyDatabase(name string, columnTitle string, columns ...string) string {
 	req := nosedata.NewEmptyDatabaseReq(client.PageID, name, columnTitle, columns...)
 	var res nosedata.CreateObjectRes
-	err := noseapi.HttpPost(noseapi.CreateDatabaseApi, req, &res, client.Token)
+	httpClient := noseapi.NewHttpClient(client.Token, "POST")
+	err := httpClient.Request(noseapi.CreateDatabaseApi, req, &res)
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +44,8 @@ func (client *NosePageClient) AppendTextBlock(texts ...string) error {
 	req := nosedata.NewAppendTextBlockReq(texts...)
 	var res nosedata.AppendBlockRes
 	api := noseapi.BlockApi.AddParam(client.PageID).AddParam("children")
-	err := noseapi.HttpPatch(string(api), req, &res, client.Token)
+	httpClient := noseapi.NewHttpClient(client.Token, "PATCH")
+	err := httpClient.Request(string(api), req, &res)
 	if err != nil {
 		return err
 	}
@@ -53,7 +56,8 @@ func (client *NosePageClient) AppendTodoBlock(text string) error {
 	req := nosedata.NewAppendTodoBlockReq(text)
 	var res nosedata.AppendBlockRes
 	api := noseapi.BlockApi.AddParam(client.PageID).AddParam("children")
-	err := noseapi.HttpPatch(string(api), req, &res, client.Token)
+	httpClient := noseapi.NewHttpClient(client.Token, "PATCH")
+	err := httpClient.Request(string(api), req, &res)
 	if err != nil {
 		return err
 	}
