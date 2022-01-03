@@ -16,28 +16,28 @@ func NewPageClient(token string, pageID string) *NosePageClient {
 	return &NosePageClient{Token: token, PageID: pageID}
 }
 
-func (client *NosePageClient) NewEmptyPage(name string) string {
+func (client *NosePageClient) NewEmptyPage(name string) (string, error) {
 	req := nosedata.NewEmptyPageReq(client.PageID, name)
 	var res nosedata.CreateObjectRes
 	httpClient := noseapi.NewHttpClient(client.Token, "POST")
 	err := httpClient.Request(noseapi.CreatePageApi, req, &res)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	log.Println("new page id is", res.ID)
-	return res.ID
+	return res.ID, nil
 }
 
-func (client *NosePageClient) NewEmptyDatabase(name string, columnTitle string, columns ...string) string {
+func (client *NosePageClient) NewEmptyDatabase(name string, columnTitle string, columns ...string) (string, error) {
 	req := nosedata.NewEmptyDatabaseReq(client.PageID, name, columnTitle, columns...)
 	var res nosedata.CreateObjectRes
 	httpClient := noseapi.NewHttpClient(client.Token, "POST")
 	err := httpClient.Request(noseapi.CreateDatabaseApi, req, &res)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	log.Println("new page id is", res.ID)
-	return res.ID
+	return res.ID, nil
 }
 
 func (client *NosePageClient) AppendTextBlock(texts ...string) error {
