@@ -163,6 +163,13 @@ func NewAppendTextBlockReq(texts ...string) *AppendBlockReq {
 	}
 }
 
+//new append text block from struct data
+func NewAppendDataTextBlockReq(data interface{}) *AppendBlockReq {
+	return &AppendBlockReq{
+		Children: []NoseBlock{NewParagraphDataBlock(data)},
+	}
+}
+
 func NewAppendTodoBlockReq(text string) *AppendBlockReq {
 	return &AppendBlockReq{
 		Children: []NoseBlock{NewTodoBlock(text)},

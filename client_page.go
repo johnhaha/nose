@@ -65,6 +65,19 @@ func (client *NosePageClient) AppendTextBlock(texts ...string) error {
 	return nil
 }
 
+//append data text from struct
+func (client *NosePageClient) AppendDataTextBlock(data interface{}) error {
+	req := nosedata.NewAppendDataTextBlockReq(data)
+	var res nosedata.AppendBlockRes
+	api := noseapi.BlockApi.AddParam(client.PageID).AddParam("children")
+	httpClient := noseapi.NewHttpClient(client.Token, "PATCH")
+	err := httpClient.Request(string(api), req, &res)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (client *NosePageClient) AppendTodoBlock(text string) error {
 	req := nosedata.NewAppendTodoBlockReq(text)
 	var res nosedata.AppendBlockRes

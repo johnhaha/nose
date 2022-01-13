@@ -40,3 +40,12 @@ func NewParagraphBlock(texts ...string) ParagraphBlock {
 		Paragraph: Paragraph{Text: richTexts},
 	}
 }
+
+func NewParagraphDataBlock(data interface{}) ParagraphBlock {
+	richTexts := NewRichTextFromData(data)
+	return ParagraphBlock{
+		Object:    "block",
+		Type:      "paragraph",
+		Paragraph: Paragraph{Text: richTexts},
+	}
+}

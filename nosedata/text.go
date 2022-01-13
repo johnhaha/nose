@@ -1,5 +1,11 @@
 package nosedata
 
+import (
+	"log"
+	"reflect"
+	"strings"
+)
+
 type Annotations struct {
 	Bold          bool   `json:"bold"`
 	Italic        bool   `json:"italic"`
@@ -7,6 +13,36 @@ type Annotations struct {
 	Underline     bool   `json:"underline"`
 	Code          bool   `json:"code"`
 	Color         string `json:"color,omitempty"`
+}
+
+func (a *Annotations) FindColor(tags []string) *Annotations {
+	for _, t := range tags {
+		if isNoseColor(t) {
+			a.Color = t
+			return a
+		}
+	}
+	return a
+}
+
+func (a *Annotations) FindBold(tags []string) *Annotations {
+	for _, t := range tags {
+		if t == boldTag {
+			a.Bold = true
+			return a
+		}
+	}
+	return a
+}
+
+func (a *Annotations) FindCode(tags []string) *Annotations {
+	for _, t := range tags {
+		if t == textCodeTag {
+			a.Code = true
+			return a
+		}
+	}
+	return a
 }
 
 type NoseText struct {
@@ -36,4 +72,27 @@ func NewSingleRichText(text string) []NoseRichText {
 	return []NoseRichText{
 		{Text: NoseText{Content: text}},
 	}
+}
+
+func NewRichTextFromData(data interface{}) []NoseRichText {
+	var richText []NoseRichText
+	t := reflect.TypeOf(data)
+	v := reflect.ValueOf(data)
+	for i := 0; i < t.NumField(); i++ {
+		f := t.Field(i)
+		switch typedValue := v.Field(i).Interface().(type) {
+		case string:
+			t := NoseRichText{Text: NoseText{Content: typedValue}}
+			if n, ok := f.Tag.Lookup("nose"); ok {
+				tagList := strings.Split(n, ",")
+				a := new(Annotations)
+				a.FindColor(tagList).FindBold(tagList).FindCode(tagList)
+				t.Annotations = a
+			}
+			richText = append(richText, t)
+		default:
+			log.Printf("unsupported field %v", f.Name)
+		}
+	}
+	return richText
 }
