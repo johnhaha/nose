@@ -73,7 +73,7 @@ func NewEmptyDatabaseReqX(parentID string, name string, data interface{}) *Creat
 		switch value.(type) {
 		case string:
 			props[f.Name] = EmptyDatabaseRichTextProp{}
-		case int, int8, int16, int32, float32, float64:
+		case int, int8, int16, int32, int64, float32, float64:
 			props[f.Name] = EmptyDatabaseNumberProp{}
 		}
 	}
