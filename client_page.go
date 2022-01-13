@@ -28,6 +28,7 @@ func (client *NosePageClient) NewEmptyPage(name string) (string, error) {
 	return res.ID, nil
 }
 
+//create db page with keys, not recommended 🔴
 func (client *NosePageClient) NewEmptyDatabase(name string, columnTitle string, columns ...string) (string, error) {
 	req := nosedata.NewEmptyDatabaseReq(client.PageID, name, columnTitle, columns...)
 	var res nosedata.CreateObjectRes
@@ -36,7 +37,19 @@ func (client *NosePageClient) NewEmptyDatabase(name string, columnTitle string, 
 	if err != nil {
 		return "", err
 	}
-	log.Println("new page id is", res.ID)
+	// log.Println("new page id is", res.ID)
+	return res.ID, nil
+}
+
+//create db page with struct value
+func (client *NosePageClient) NewDB(name string, d interface{}) (string, error) {
+	req := nosedata.NewEmptyDatabaseReqX(client.PageID, name, d)
+	var res nosedata.CreateObjectRes
+	httpClient := noseapi.NewHttpClient(client.Token, "POST")
+	err := httpClient.Request(noseapi.CreateDatabaseApi, req, &res)
+	if err != nil {
+		return "", err
+	}
 	return res.ID, nil
 }
 

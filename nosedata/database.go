@@ -50,3 +50,8 @@ func NewDBTextColumn(text string) *NoseDatabaseRichTextProp {
 		RichText: NewSingleRichText(text),
 	}
 }
+
+//create new db page number column
+func NewDBNumberColumn(n interface{}) *NoseNumber {
+	return &NoseNumber{Number: n}
+}
