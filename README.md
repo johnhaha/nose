@@ -1,10 +1,10 @@
 # 👃 nose
 
-golang api for notion
-currently support some basic request
+notion api
+support some very basic features
 
 ```text
-go get github.com/johnhaha/nose@v0.0.5
+go get github.com/johnhaha/nose@v0.0.6
 ```
 
 ## 📃  Page API
