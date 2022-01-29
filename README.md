@@ -4,7 +4,7 @@ notion api
 support some very basic features
 
 ```text
-go get github.com/johnhaha/nose@v0.0.8
+go get github.com/johnhaha/nose@v0.0.9
 ```
 
 ## 📃  Page API
