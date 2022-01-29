@@ -79,6 +79,9 @@ func NewRichTextFromData(data interface{}) []NoseRichText {
 	t := reflect.TypeOf(data)
 	v := reflect.ValueOf(data)
 	for i := 0; i < t.NumField(); i++ {
+		if v.Field(i).IsZero() {
+			continue
+		}
 		f := t.Field(i)
 		switch typedValue := v.Field(i).Interface().(type) {
 		case string:

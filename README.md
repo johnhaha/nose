@@ -4,7 +4,7 @@ notion api
 support some very basic features
 
 ```text
-go get github.com/johnhaha/nose@v0.0.7
+go get github.com/johnhaha/nose@v0.0.8
 ```
 
 ## 📃  Page API
@@ -54,7 +54,7 @@ client := nose.NewDBClient("YOUR-TOKEN","DATABASE-ID")
 ### Insert page to database
 
 ```go
-client.NewPage(map[string]{"TITLE":"TITLE"},map[string]{"COLUMN1":"COLUMN1","COLUMN2":"COLUMN2"})
+client.NewPage(map[string]string{"TITLE":"TITLE"},map[string]string{"COLUMN1":"COLUMN1","COLUMN2":"COLUMN2"})
 ```
 
 ## 🎎  Client Exchange

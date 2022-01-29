@@ -126,6 +126,9 @@ func NewCreateDatabasePageReqX(dbID string, data interface{}) *CreateDatabasePag
 
 	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i)
+		if v.Field(i).IsZero() {
+			continue
+		}
 		value := v.Field(i).Interface()
 		if n, ok := f.Tag.Lookup("nose"); ok && n == "title" {
 			switch typedValue := value.(type) {
