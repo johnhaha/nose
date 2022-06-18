@@ -1,11 +1,16 @@
 package nosedata
 
 type NoseNumber struct {
-	Number interface{} `json:"number"`
+	Number any `json:"number"`
 }
 
 func (n *NoseNumber) PropType() string {
 	return "number"
+}
+
+//create new db page number column
+func NewDBNumberColumn(n any) *NoseNumber {
+	return &NoseNumber{Number: n}
 }
 
 //for database prop init

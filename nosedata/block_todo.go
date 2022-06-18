@@ -12,8 +12,8 @@ type TodoBlock struct {
 }
 
 type ToDo struct {
-	Text    []NoseRichText `json:"text"`
-	Checked bool           `json:"checked"`
+	RichText []NoseRichText `json:"rich_text"`
+	Checked  bool           `json:"checked"`
 }
 
 func NewTodoBlock(text string) *TodoBlock {
@@ -21,7 +21,7 @@ func NewTodoBlock(text string) *TodoBlock {
 		Object: "block",
 		Type:   "to_do",
 		ToDo: ToDo{
-			Text: NewSingleRichText(text),
+			RichText: NewSingleRichText(text),
 		},
 	}
 }

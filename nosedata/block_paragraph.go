@@ -22,7 +22,7 @@ type ParagraphBlock struct {
 }
 
 type Paragraph struct {
-	Text []NoseRichText `json:"text"`
+	RichText []NoseRichText `json:"rich_text"`
 }
 
 func (block ParagraphBlock) BlockType() string {
@@ -37,15 +37,15 @@ func NewParagraphBlock(texts ...string) ParagraphBlock {
 	return ParagraphBlock{
 		Object:    "block",
 		Type:      "paragraph",
-		Paragraph: Paragraph{Text: richTexts},
+		Paragraph: Paragraph{RichText: richTexts},
 	}
 }
 
-func NewParagraphDataBlock(data interface{}) ParagraphBlock {
+func NewParagraphDataBlock(data any) ParagraphBlock {
 	richTexts := NewRichTextFromData(data)
 	return ParagraphBlock{
 		Object:    "block",
 		Type:      "paragraph",
-		Paragraph: Paragraph{Text: richTexts},
+		Paragraph: Paragraph{RichText: richTexts},
 	}
 }

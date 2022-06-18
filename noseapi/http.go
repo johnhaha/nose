@@ -16,7 +16,7 @@ func NewHttpClient(token string, requestType string) *NotionHttpClient {
 	return &NotionHttpClient{Token: token, RequestType: requestType}
 }
 
-func (client *NotionHttpClient) Request(url string, body interface{}, res interface{}) error {
+func (client *NotionHttpClient) Request(url string, body any, res any) error {
 	postBody, _ := json.Marshal(body)
 	responseBody := bytes.NewBuffer(postBody)
 	req, _ := http.NewRequest(client.RequestType, url, responseBody)

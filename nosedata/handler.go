@@ -3,6 +3,7 @@ package nosedata
 import (
 	"log"
 	"reflect"
+	"time"
 )
 
 type CreatePageReq struct {
@@ -30,29 +31,37 @@ type CreateDatabaseReq struct {
 	Properties map[string]NoseDatabaseProp `json:"properties"`
 }
 
-func NewEmptyDatabaseReq(parentID string, name string, columnTitle string, textColumns ...string) *CreateDatabaseReq {
-	pageParent := PageInfo{
-		PageType: "page_id",
-		PageID:   parentID,
+type CreateDatabasePageReq struct {
+	Parent     DBInfo                      `json:"parent"`
+	Title      []NoseRichText              `json:"title,omitempty"`
+	Properties map[string]NoseDatabaseProp `json:"properties"`
+}
+
+type AppendBlockReq struct {
+	Children []NoseBlock `json:"children"`
+}
+
+func NewAppendTextBlockReq(texts ...string) *AppendBlockReq {
+	return &AppendBlockReq{
+		Children: []NoseBlock{NewParagraphBlock(texts...)},
 	}
-	title := []NoseRichText{
-		{Text: NoseText{Content: name}},
+}
+
+//new append text block from struct data
+func NewAppendDataTextBlockReq(data any) *AppendBlockReq {
+	return &AppendBlockReq{
+		Children: []NoseBlock{NewParagraphDataBlock(data)},
 	}
-	props := make(map[string]NoseDatabaseProp)
-	for _, text := range textColumns {
-		props[text] = EmptyDatabaseRichTextProp{}
+}
+
+func NewAppendTodoBlockReq(text string) *AppendBlockReq {
+	return &AppendBlockReq{
+		Children: []NoseBlock{NewTodoBlock(text)},
 	}
-	props[columnTitle] = EmptyDatabaseTitleProp{}
-	req := CreateDatabaseReq{
-		Parent:     pageParent,
-		Title:      title,
-		Properties: props,
-	}
-	return &req
 }
 
 //generate new db page req with struct value
-func NewEmptyDatabaseReqX(parentID string, name string, data interface{}) *CreateDatabaseReq {
+func NewEmptyDatabaseReqX(parentID string, name string, data any) *CreateDatabaseReq {
 	pageParent := PageInfo{
 		PageType: "page_id",
 		PageID:   parentID,
@@ -75,6 +84,8 @@ func NewEmptyDatabaseReqX(parentID string, name string, data interface{}) *Creat
 			props[f.Name] = EmptyDatabaseRichTextProp{}
 		case int, int8, int16, int32, int64, float32, float64:
 			props[f.Name] = EmptyDatabaseNumberProp{}
+		case time.Time:
+			props[f.Name] = EmptyDatabaseDateProp{}
 		}
 	}
 	req := CreateDatabaseReq{
@@ -85,37 +96,8 @@ func NewEmptyDatabaseReqX(parentID string, name string, data interface{}) *Creat
 	return &req
 }
 
-type CreateDatabasePageReq struct {
-	Parent     DBInfo                      `json:"parent"`
-	Title      []NoseRichText              `json:"title,omitempty"`
-	Properties map[string]NoseDatabaseProp `json:"properties"`
-}
-
-//generate new data base page req
-func NewCreateDatabasePageReq(dbID string, title map[string]string, values map[string]interface{}) *CreateDatabasePageReq {
-	parent := DBInfo{
-		DatabaseID: dbID,
-	}
-	props := make(map[string]NoseDatabaseProp)
-	for key, value := range title {
-		props[key] = NewDBTitleColumn(value)
-	}
-	for key, value := range values {
-		switch v := value.(type) {
-		case string:
-			props[key] = NewDBTextColumn(v)
-		case int, int16, int32, int64, int8, float32, float64:
-			props[key] = NewDBNumberColumn(v)
-		}
-	}
-	return &CreateDatabasePageReq{
-		Parent:     parent,
-		Properties: props,
-	}
-}
-
 //generate db page req with struct
-func NewCreateDatabasePageReqX(dbID string, data interface{}) *CreateDatabasePageReq {
+func NewCreateDatabasePageReqX(dbID string, data any) *CreateDatabasePageReq {
 	parent := DBInfo{
 		DatabaseID: dbID,
 	}
@@ -144,6 +126,8 @@ func NewCreateDatabasePageReqX(dbID string, data interface{}) *CreateDatabasePag
 				props[f.Name] = NewDBTextColumn(typedValue)
 			case int, int8, int16, int32, int64, float32, float64:
 				props[f.Name] = NewDBNumberColumn(typedValue)
+			case time.Time:
+				props[f.Name] = NewDBDateColumn(typedValue)
 			default:
 				log.Printf("unsupported field value for field %v, value %v", f.Name, typedValue)
 			}
@@ -156,25 +140,46 @@ func NewCreateDatabasePageReqX(dbID string, data interface{}) *CreateDatabasePag
 	}
 }
 
-type AppendBlockReq struct {
-	Children []NoseBlock `json:"children"`
-}
+//generate new data base page req
+// func NewCreateDatabasePageReq(dbID string, title map[string]string, values map[string]any) *CreateDatabasePageReq {
+// 	parent := DBInfo{
+// 		DatabaseID: dbID,
+// 	}
+// 	props := make(map[string]NoseDatabaseProp)
+// 	for key, value := range title {
+// 		props[key] = NewDBTitleColumn(value)
+// 	}
+// 	for key, value := range values {
+// 		switch v := value.(type) {
+// 		case string:
+// 			props[key] = NewDBTextColumn(v)
+// 		case int, int16, int32, int64, int8, float32, float64:
+// 			props[key] = NewDBNumberColumn(v)
+// 		}
+// 	}
+// 	return &CreateDatabasePageReq{
+// 		Parent:     parent,
+// 		Properties: props,
+// 	}
+// }
 
-func NewAppendTextBlockReq(texts ...string) *AppendBlockReq {
-	return &AppendBlockReq{
-		Children: []NoseBlock{NewParagraphBlock(texts...)},
-	}
-}
-
-//new append text block from struct data
-func NewAppendDataTextBlockReq(data interface{}) *AppendBlockReq {
-	return &AppendBlockReq{
-		Children: []NoseBlock{NewParagraphDataBlock(data)},
-	}
-}
-
-func NewAppendTodoBlockReq(text string) *AppendBlockReq {
-	return &AppendBlockReq{
-		Children: []NoseBlock{NewTodoBlock(text)},
-	}
-}
+// func NewEmptyDatabaseReq(parentID string, name string, columnTitle string, textColumns ...string) *CreateDatabaseReq {
+// 	pageParent := PageInfo{
+// 		PageType: "page_id",
+// 		PageID:   parentID,
+// 	}
+// 	title := []NoseRichText{
+// 		{Text: NoseText{Content: name}},
+// 	}
+// 	props := make(map[string]NoseDatabaseProp)
+// 	for _, text := range textColumns {
+// 		props[text] = EmptyDatabaseRichTextProp{}
+// 	}
+// 	props[columnTitle] = EmptyDatabaseTitleProp{}
+// 	req := CreateDatabaseReq{
+// 		Parent:     pageParent,
+// 		Title:      title,
+// 		Properties: props,
+// 	}
+// 	return &req
+// }

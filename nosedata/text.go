@@ -74,7 +74,7 @@ func NewSingleRichText(text string) []NoseRichText {
 	}
 }
 
-func NewRichTextFromData(data interface{}) []NoseRichText {
+func NewRichTextFromData(data any) []NoseRichText {
 	var richText []NoseRichText
 	t := reflect.TypeOf(data)
 	v := reflect.ValueOf(data)

@@ -1,10 +1,12 @@
 # 👃 nose
 
 notion api
-support some very basic features
+support basic functions such as create page, db, text block
+
+## 🔽 How to install
 
 ```text
-go get github.com/johnhaha/nose@v0.0.9
+go get github.com/johnhaha/nose@v0.0.10
 ```
 
 ## 📃  Page API
@@ -23,10 +25,17 @@ client.NewEmptyPage("PAGE-NAME")
 
 ### Create Database
 
-only support title and text
+save Struct data to json, with nose tag
 
 ```go
-client.NewEmptyDatabase("DATABASE-NAME","TITLE-COLUMN-NAME","COLUMN-NAME1","COLUMN-NAME2")
+type Sample struct {
+	Title     string     `json:"title" nose:"title"`
+    Desc      string     `json:"desc" nose:"orange,bold"`
+	Count     int        `json:"count"`
+	Updated   time.Time  `json:"updated"`
+	CreatedAt time.Time  `json:"createdAt"`
+} 
+client.NewDB("DATABASE-NAME",Sample{})
 ```
 
 ### Append Text Block
@@ -53,8 +62,10 @@ client := nose.NewDBClient("YOUR-TOKEN","DATABASE-ID")
 
 ### Insert page to database
 
+save struct data to database
+
 ```go
-client.NewPage(map[string]string{"TITLE":"TITLE"},map[string]string{"COLUMN1":"COLUMN1","COLUMN2":"COLUMN2"})
+client.SaveData(sample)
 ```
 
 ## 🎎  Client Exchange
